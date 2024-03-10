@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="title"></div>
+    <div id="queue"></div>
+    <div id="room"></div>
+    <div>
+        <button id="button_queue" type="button" onclick="buttonQueue();">生成抽取队列</button>
+        <button id="button_get" type="button" onclick="buttonGet();">开始随机抽取</button>
+    </div>
+</body>
+
+<script>
+    student = [
+        {
+            'name': 'dw',
+            'uid': 737864
+        },
+        {
+            'name': 'nr',
+            'uid': 682739
+        },
+        {
+            'name': 'mhd',
+            'uid': 754307
+        },
+        {
+            'name': 'hzm',
+            'uid': 701254
+        },
+        {
+            'name': 'xxy',
+            'uid': 754310
+        },
+        {
+            'name': 'zjt',
+            'uid': 754311
+        },
+        {
+            'name': 'hjj',
+            'uid': 754502
+        },
+        {
+            'name': 'wht',
+            'uid': 754324
+        },
+        {
+            'name': 'whz',
+            'uid': 754321
+        },
+        {
+            'name': 'hxr',
+            'uid': 754467
+        },
+        {
+            'name': 'xyx',
+            'uid': 928914
+        },
+        {
+            'name': 'hy',
+            'uid': 754960
+        },
+        {
+            'name': 'cls',
+            'uid': 897933
+        },
+        {
+            'name': 'cr',
+            'uid': 754516
+        },
+        {
+            'name': 'pl',
+            'uid': 704089
+        },
+        {
+            'name': 'fzx',
+            'uid': 754300
+        },
+        {
+            'name': 'wrc',
+            'uid': 975079
+        },
+        {
+            'name': 'ljy',
+            'uid': 688783
+        },
+        {
+            'name': 'czy',
+            'uid': 656765
+        },
+        {
+            'name': 'szy',
+            'uid': 807139
+        },
+        {
+            'name': 'zp',
+            'uid': 983519
+        },
+        {
+            'name': 'whx',
+            'uid': 928579
+        },
+        {
+            'name': 'sgyh',
+            'uid': 579099
+        },
+    ]
+
+    queue = [{ 'name': 'xht', 'uid': 100544 }];
+
+    cnt = student.length;
+
+    room = [[]];
+
+    const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+    function rand(l, r) {
+        return Math.floor(Math.random() * (r - l + 1)) + l;
+    }
+
+    function getImg(id, w = 100) {
+        return `<a href="https://www.luogu.com.cn/user/${queue[id].uid}" target="_blank"><img src="https://cdn.luogu.com.cn/upload/usericon/${queue[id].uid}.png" height="${w}" width="${w}"></a>`
+    }
+
+    function init() {
+        for (var i = 0; i < cnt; i++) {
+            queue.push(student[i]);
+        }
+        for (var i = 1; i <= 4; i++) {
+            var temp = [0, 0, 0, 0, 0, 0, 0];
+            room.push(temp);
+        }
+        for (var i = 1; i <= 1000; i++) {
+            var x, y;
+            x = rand(1, cnt);
+            y = rand(1, cnt);
+            var temp;
+            temp = queue[x];
+            queue[x] = queue[y];
+            queue[y] = temp;
+        }
+    }
+
+    function getQueue(l, r) {
+        var res = '';
+        for (var i = l; i <= r; i++) {
+            res += getImg(i, 75);
+        }
+        return res;
+    }
+
+    function getClassRoom() {
+        var res = '';
+        for (var i = 1; i <= 4; i++) {
+            for (var j = 1; j <= 6; j++) {
+                res += getImg(room[i][j]);
+            }
+            res += '<br>';
+        }
+        return res;
+    }
+
+    function update(id) {
+        if (id == cnt) {
+            var f_title = document.getElementById('title');
+            f_title.innerHTML = `<h1>抽取完毕</h1>`
+
+            var f_queue = document.getElementById('queue');
+            f_queue.innerHTML = '';
+
+            var f_room = document.getElementById('room');
+            f_room.innerHTML = '<h2>最终教室位置</h2><br>' + getClassRoom();
+        }
+        else if (id != -1) {
+            var f_title = document.getElementById('title');
+            f_title.innerHTML = `<h1>当前正在抽取的幸运观众是 ${queue[id + 1].name}(uid ${queue[id + 1].uid}) </h1>`
+
+            var f_queue = document.getElementById('queue');
+            f_queue.innerHTML = '<h2>当前随机队列</h2><br>' + getQueue(id + 1, cnt);
+
+            var f_room = document.getElementById('room');
+            f_room.innerHTML = '<h2>当前教室位置</h2><br>' + getClassRoom();
+        }
+        else {
+            var f_title = document.getElementById('title');
+            f_title.innerHTML = `<h1>已准备好抽取</h1>`
+
+            var f_queue = document.getElementById('queue');
+            f_queue.innerHTML = '<h2>当前随机队列</h2><br>' + getQueue(1, cnt);
+
+            var f_room = document.getElementById('room');
+            f_room.innerHTML = '<h2>当前教室位置</h2><br>' + getClassRoom();
+        }
+    }
+
+    function change(id) {
+        var x = rand(1, 4), y = rand(1, 6);
+        for (; room[x][y] != 0;) {
+            x = rand(1, 4), y = rand(1, 6);
+        }
+        room[x][y] = id;
+        update(id);
+    }
+
+    function buttonQueue() {
+        document.getElementById("button_get").disabled = false;
+
+        init();
+        update(-1);
+    }
+
+    const buttonGet = async () => {
+        var f_queue = document.getElementById('button_queue');
+        f_queue.disabled = true;
+
+        var f_get = document.getElementById('button_get');
+        f_get.disabled = true;
+
+        update(0);
+        for (var i = 1; i <= cnt; i++) {
+            await sleep(1000);
+            change(i);
+        }
+    }
+
+    document.getElementById("button_get").disabled = true;
+</script>
+
+</html>
+
+<!--
+dw 737864
+nr 682739
+mhd 754307
+hzm 701254
+xxy 754310
+zjt 754311
+hjj 754502
+wht 754324
+whz 754321
+hxr 754467
+xyx 928914
+hy 754960
+cls 897933
+cr 754516
+pl 704089
+fzx 754300
+wrc 975079
+ljy 688783
+czy 656765
+szy 807139
+zp 983519
+whx 928579
+sgyh 579099
+** ** **
+** ** **
+** ** **
+** ** **
+-->
