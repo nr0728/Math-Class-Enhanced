@@ -1,5 +1,5 @@
-# Enhanced Version of <a href="/CodingOIer/Math-Class">CodingOIer/Math-Class</a>
+# Enhanced Version of <a href="https://github.com/CodingOIer/Math-Class">CodingOIer/Math-Class</a>
 
-Original version by [CodingOIer](/CodingOIer), enhanced by [nr0728](/nr0728).
+Original version by [CodingOIer](https://github.com/CodingOIer), enhanced by [nr0728](https://github.com/nr0728).
 
 Feel free to fork!
